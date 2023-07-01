@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import * as http from 'http';
 
 // GET api/users is used to get all persons
 // Server should answer with status code 200 and all users records
 
-const port = 3000;
+const port = process.env.PORT || 4000;
 
 const server = http.createServer((request, response) => {
 	const { method, url,  } = request;
@@ -24,5 +25,5 @@ const server = http.createServer((request, response) => {
 });
 
 server.listen(port, () => {
-	console.log(`Server running at localhost`);
+	console.log(`Server is listening on port ${port}`);
 });
