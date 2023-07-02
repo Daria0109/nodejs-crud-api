@@ -3,7 +3,7 @@ import { IUser } from '../../types/user';
 import { getAppRoute } from '../../utils/getAppRoute';
 import { Routes } from '../../types/enums/routes';
 import { invalidRequestData, notFoundError } from '../../errorHandlers/errorHandlers';
-import { addUser } from '../../index';
+import { addUser } from '../serverRequestsHandlers';
 
 const { randomUUID } = await import('node:crypto');
 

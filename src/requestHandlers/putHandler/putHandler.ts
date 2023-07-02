@@ -8,7 +8,7 @@ import {
 	userNotExist
 } from '../../errorHandlers/errorHandlers';
 import { IUser } from '../../types/user';
-import { updateUser } from '../../index';
+import { updateUser } from '../serverRequestsHandlers';
 
 export const putHandler = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
 	const { url = '/' } = req;
@@ -17,7 +17,6 @@ export const putHandler = (req: IncomingMessage, res: ServerResponse, users: IUs
 		const urlSegments = url.split('/');
 		const userId = urlSegments[urlSegments.length - 1];
 		const regex = /^[a-z,0-9-]{36}$/;
-		
 		
 		if (regex.test(userId)) {
 			const requestedUser = users.find((user) => user.id === userId);
