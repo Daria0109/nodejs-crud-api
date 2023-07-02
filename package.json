@@ -7,7 +7,9 @@
     "build": "tsc src/index.ts",
     "start": "ts-node src/index.ts",
     "start:dev": "nodemon",
-    "start:prod": "npm run build && node src/index.js"
+    "start:prod": "npm run build && node src/index.js",
+    "lint": "eslint src/**/*.ts",
+    "format": "eslint src/**/*.ts --fix"
   },
   "repository": {
     "type": "git",
@@ -21,9 +23,12 @@
   "homepage": "https://github.com/Daria0109/nodejs-crud-api#readme",
   "devDependencies": {
     "@types/node": "^20.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
+    "eslint": "^8.44.0",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
+    "typescript": "^5.0.2"
   },
   "dependencies": {
     "dotenv": "^16.3.1"
