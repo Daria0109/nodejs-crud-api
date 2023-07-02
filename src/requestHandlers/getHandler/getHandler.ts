@@ -1,9 +1,12 @@
 import { getAppRoute } from '../../utils/getAppRoute';
 import { Routes } from '../../types/enums/routes';
-import { ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
 import { IUser } from '../../types/user';
+import { notFoundError } from '../../errorHandlers/errorHandlers';
 
-export const getHandler = (res: ServerResponse, url: string, users: IUser[]) => {
+export const getHandler = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
+	const { url = '/' } = req;
+	
 	if (getAppRoute(url) === Routes.USERS) {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'application/json');
@@ -35,9 +38,6 @@ export const getHandler = (res: ServerResponse, url: string, users: IUser[]) => 
 			res.end();
 		}
 	} else {
-		res.statusCode = 404;
-		res.setHeader('Content-Type', 'application/json');
-		res.write(JSON.stringify({ message: 'Resource is not found' }));
-		res.end();
+		notFoundError(res);
 	}
 }

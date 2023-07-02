@@ -3,15 +3,17 @@ import { IUser } from '../types/user';
 import { HTTPMethods } from '../types/enums/methods';
 import { getHandler } from './getHandler/getHandler';
 import { serverError } from '../errorHandlers/errorHandlers';
+import { postHandler } from './postHandler/postHandler';
 
-export const serverRequestsHandlers = (req: IncomingMessage, res: ServerResponse) => {
-	const { method, url = '/' } = req;
-	let users: IUser[] = [];
-	console.log('url', url);
+export const serverRequestsHandlers = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
+	const { method } = req;
 	
 	switch (method) {
 		case HTTPMethods.GET:
-			getHandler(res, url, users);
+			getHandler(req, res, users);
+			break;
+		case HTTPMethods.POST:
+			postHandler(req, res);
 			break;
 		
 		default:
