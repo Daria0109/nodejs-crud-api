@@ -4,6 +4,7 @@ import { HTTPMethods } from '../types/enums/methods';
 import { getHandler } from './getHandler/getHandler';
 import { serverError } from '../errorHandlers/errorHandlers';
 import { postHandler } from './postHandler/postHandler';
+import { putHandler } from './putHandler/putHandler';
 
 export const serverRequestsHandlers = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
 	const { method } = req;
@@ -15,6 +16,9 @@ export const serverRequestsHandlers = (req: IncomingMessage, res: ServerResponse
 		case HTTPMethods.POST:
 			postHandler(req, res);
 			break;
+		case HTTPMethods.PUT:
+			putHandler(req, res, users);
+			break
 		
 		default:
 			serverError(res);

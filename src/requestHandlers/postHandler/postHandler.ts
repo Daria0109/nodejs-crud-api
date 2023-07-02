@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { IUser } from '../../types/user';
 import { getAppRoute } from '../../utils/getAppRoute';
 import { Routes } from '../../types/enums/routes';
-import { notFoundError } from '../../errorHandlers/errorHandlers';
+import { invalidRequestData, notFoundError } from '../../errorHandlers/errorHandlers';
 import { addUser } from '../../index';
 
 const { randomUUID } = await import('node:crypto');
@@ -19,12 +19,13 @@ export const postHandler = (req: IncomingMessage, res: ServerResponse) => {
 		
 		req.on('end', () => {
 			reqBody = Buffer.concat(reqBody);
+			console.log('reqBody', reqBody.toString())
 			const reqUser = JSON.parse(reqBody.toString());
 			
 			if (
 				typeof reqUser?.username === 'string'
 				&& typeof reqUser?.age === 'number'
-				&& typeof reqUser?.hobbies === 'object'
+				&& Array.isArray(reqUser?.hobbies)
 			) {
 				const resData = { ...reqUser, id: randomUUID() };
 				addUser(resData);
@@ -34,10 +35,7 @@ export const postHandler = (req: IncomingMessage, res: ServerResponse) => {
 				res.write(JSON.stringify(resData));
 				res.end();
 			} else {
-				res.statusCode = 400;
-				res.setHeader('Content-Type', 'application/json');
-				res.write(JSON.stringify({ message: 'Invalid data provided' }));
-				res.end();
+				invalidRequestData(res);
 			}
 		});
 	} else {

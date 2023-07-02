@@ -2,7 +2,7 @@ import { getAppRoute } from '../../utils/getAppRoute';
 import { Routes } from '../../types/enums/routes';
 import { IncomingMessage, ServerResponse } from 'http';
 import { IUser } from '../../types/user';
-import { notFoundError } from '../../errorHandlers/errorHandlers';
+import { invalidUserId, notFoundError, userNotExist } from '../../errorHandlers/errorHandlers';
 
 export const getHandler = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
 	const { url = '/' } = req;
@@ -26,16 +26,10 @@ export const getHandler = (req: IncomingMessage, res: ServerResponse, users: IUs
 				res.write(JSON.stringify(requestedUser));
 				res.end();
 			} else {
-				res.statusCode = 404;
-				res.setHeader('Content-Type', 'application/json');
-				res.write(JSON.stringify({ message: `User with id '${userId}' does not exist` }));
-				res.end();
+				userNotExist(res, userId);
 			}
 		} else {
-			res.statusCode = 400;
-			res.setHeader('Content-Type', 'application/json');
-			res.write(JSON.stringify({ message: 'Invalid user id is provided' }));
-			res.end();
+			invalidUserId(res);
 		}
 	} else {
 		notFoundError(res);
