@@ -1,27 +1,13 @@
 import 'dotenv/config';
 import * as http from 'http';
+import { serverRequestsHandlers } from './requestHandlers/serverRequestsHandlers';
 
-// GET api/users is used to get all persons
-// Server should answer with status code 200 and all users records
+const { randomUUID } = await import('node:crypto');
 
 const port = process.env.PORT || 4000;
 
-const server = http.createServer((request, response) => {
-	const { method, url,  } = request;
-	console.log('method', method)
-	console.log('url', url)
-	
-	let body: any = [];
-	request.on('data', (chunk) => {
-		body.push(chunk);
-	}).on('end', () => {
-		body = Buffer.concat(body).toString();
-		console.log('body', body)
-	});
-	
-	response.statusCode = 200;
-	response.setHeader('Content-Type', 'text/plain');
-	response.end('Hello World');
+const server = http.createServer((req, res) => {
+	serverRequestsHandlers(req, res);
 });
 
 server.listen(port, () => {
