@@ -9,18 +9,17 @@ import {
 } from '../../errorHandlers/errorHandlers';
 import { IUser } from '../../types/user';
 import { updateUser } from '../serverRequestsHandlers';
+import { getUserIdFromUrl, isValidId } from '../../utils/getUserIdFromUrl';
 
 export const putHandler = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
 	const { url = '/' } = req;
 	
 	if (getAppRoute(url) === Routes.USER) {
-		const urlSegments = url.split('/');
-		const userId = urlSegments[urlSegments.length - 1];
-		const regex = /^[a-z,0-9-]{36}$/;
+		const userId = getUserIdFromUrl(url);
 		
-		if (regex.test(userId)) {
+		if (isValidId(userId)) {
 			const requestedUser = users.find((user) => user.id === userId);
-			let reqBody: any = [];
+			const reqBody: Buffer[] = [];
 			
 			if (!requestedUser) {
 				userNotExist(res, userId);
@@ -32,9 +31,8 @@ export const putHandler = (req: IncomingMessage, res: ServerResponse, users: IUs
 			});
 			
 			req.on('end', () => {
-				reqBody = Buffer.concat(reqBody);
-				console.log('reqBody', reqBody.toString())
-				const reqUser = JSON.parse(reqBody.toString());
+				const reqBodyEnd = Buffer.concat(reqBody);
+				const reqUser = JSON.parse(reqBodyEnd.toString());
 				
 				if (
 					typeof reqUser?.username === 'string'
@@ -53,7 +51,6 @@ export const putHandler = (req: IncomingMessage, res: ServerResponse, users: IUs
 				}
 			});
 			
-			
 		} else {
 			invalidUserId(res);
 		}
@@ -61,4 +58,4 @@ export const putHandler = (req: IncomingMessage, res: ServerResponse, users: IUs
 	} else {
 		notFoundError(res);
 	}
-}
+};

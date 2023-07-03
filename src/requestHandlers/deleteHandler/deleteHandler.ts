@@ -4,16 +4,15 @@ import { getAppRoute } from '../../utils/getAppRoute';
 import { Routes } from '../../types/enums/routes';
 import { invalidUserId, notFoundError, userNotExist } from '../../errorHandlers/errorHandlers';
 import { deleteUser } from '../serverRequestsHandlers';
+import { getUserIdFromUrl, isValidId } from '../../utils/getUserIdFromUrl';
 
 export const deleteHandler = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
 	const { url = '/' } = req;
 	
 	if (getAppRoute(url) === Routes.USER) {
-		const urlSegments = url.split('/');
-		const userId = urlSegments[urlSegments.length - 1];
-		const regex = /^[a-z,0-9-]{36}$/;
+		const userId = getUserIdFromUrl(url);
 		
-		if (regex.test(userId)) {
+		if (isValidId(userId)) {
 			const requestedUser = users.find((user) => user.id === userId);
 			
 			if (!requestedUser) {
@@ -25,7 +24,6 @@ export const deleteHandler = (req: IncomingMessage, res: ServerResponse, users: 
 			
 			res.statusCode = 204;
 			res.setHeader('Content-Type', 'application/json');
-			res.write(JSON.stringify({ message: 'User is deleted' }));
 			res.end();
 		} else {
 			invalidUserId(res);
@@ -33,4 +31,4 @@ export const deleteHandler = (req: IncomingMessage, res: ServerResponse, users: 
 	} else {
 		notFoundError(res);
 	}
-}
+};

@@ -1,26 +1,23 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { IUser } from '../../types/user';
 import { getAppRoute } from '../../utils/getAppRoute';
 import { Routes } from '../../types/enums/routes';
 import { invalidRequestData, notFoundError } from '../../errorHandlers/errorHandlers';
 import { addUser } from '../serverRequestsHandlers';
-
-const { randomUUID } = await import('node:crypto');
+import { randomUUID } from 'crypto';
 
 export const postHandler = (req: IncomingMessage, res: ServerResponse) => {
 	const { url = '/' } = req;
-	
+
 	if (getAppRoute(url) === Routes.USERS) {
-		let reqBody: any = [];
+		const reqBody: Buffer[] = [];
 		
 		req.on('data', (chunk) => {
 			reqBody.push(chunk);
 		});
 		
 		req.on('end', () => {
-			reqBody = Buffer.concat(reqBody);
-			console.log('reqBody', reqBody.toString())
-			const reqUser = JSON.parse(reqBody.toString());
+			const reqBodyEnd = Buffer.concat(reqBody);
+			const reqUser = JSON.parse(reqBodyEnd.toString());
 			
 			if (
 				typeof reqUser?.username === 'string'
@@ -41,4 +38,4 @@ export const postHandler = (req: IncomingMessage, res: ServerResponse) => {
 	} else {
 		notFoundError(res);
 	}
-}
+};

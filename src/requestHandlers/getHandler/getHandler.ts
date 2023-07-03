@@ -2,10 +2,18 @@ import { getAppRoute } from '../../utils/getAppRoute';
 import { Routes } from '../../types/enums/routes';
 import { IncomingMessage, ServerResponse } from 'http';
 import { IUser } from '../../types/user';
-import { invalidUserId, notFoundError, userNotExist } from '../../errorHandlers/errorHandlers';
+import { invalidUserId, notFoundError, serverError, userNotExist } from '../../errorHandlers/errorHandlers';
+import { getUserIdFromUrl, isValidId } from '../../utils/getUserIdFromUrl';
 
 export const getHandler = (req: IncomingMessage, res: ServerResponse, users: IUser[]) => {
 	const { url = '/' } = req;
+	req.on('end', () => {
+		new Error('error');
+		req.on('error', () => {
+			serverError(res);
+			return;
+		});
+	});
 	
 	if (getAppRoute(url) === Routes.USERS) {
 		res.statusCode = 200;
@@ -13,11 +21,9 @@ export const getHandler = (req: IncomingMessage, res: ServerResponse, users: IUs
 		res.write(JSON.stringify(users));
 		res.end();
 	} else if (getAppRoute(url) === Routes.USER) {
-		const urlSegments = url.split('/');
-		const userId = urlSegments[urlSegments.length - 1];
-		const regex = /^[a-z,0-9-]{36}$/;
+		const userId = getUserIdFromUrl(url);
 		
-		if (regex.test(userId)) {
+		if (isValidId(userId)) {
 			const requestedUser = users.find((user) => user.id === userId);
 			
 			if (requestedUser) {
@@ -34,4 +40,4 @@ export const getHandler = (req: IncomingMessage, res: ServerResponse, users: IUs
 	} else {
 		notFoundError(res);
 	}
-}
+};

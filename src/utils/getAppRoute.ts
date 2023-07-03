@@ -13,9 +13,9 @@ export const getAppRoute = (url: string) => {
 			.filter((segment) => Boolean(segment));
 		
 		if (pathSegments.length === 1) {
-			route = `${baseRoute}/:id`
+			route = `${baseRoute}/:id`;
 		}
 	}
 	
 	return route;
-}
+};
