@@ -24,7 +24,7 @@ export const deleteUser = (userId: string) => {
 
 export const serverRequestsHandlers = (req: IncomingMessage, res: ServerResponse) => {
 	const { method } = req;
-	console.log('users', users);
+	
 	switch (method) {
 		case HTTPMethods.GET:
 			getHandler(req, res, users);
